@@ -17,7 +17,7 @@ standalone: wpcom-cookie-auth.js
 install: node_modules
 
 clean:
-	@rm -rf node_modules wp-cookie-auth.js
+	@rm -rf node_modules wpcom-cookie-auth.js
 
 wpcom-cookie-auth.js: install index.js
 	@$(BROWSERIFY) -s wpcomProxyRequest index.js > $@
