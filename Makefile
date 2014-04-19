@@ -3,16 +3,29 @@
 THIS_MAKEFILE_PATH:=$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR:=$(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
-# BIN folder
+# BIN directory
 BIN := $(THIS_DIR)/node_modules/.bin
 
 # applications
 NODE ?= node
+NPM ?= $(NODE) $(shell which npm)
 BROWSERIFY ?= $(NODE) $(BIN)/browserify
+ADD_COMPONENT_SYMLINKS ?= $(NODE) $(BIN)/add-component-symlinks
 
 standalone: wpcom-cookie-auth.js
 
-wpcom-cookie-auth.js: index.js
-	@$(BROWSERIFY) -s wpcom_proxy_request index.js > $@
+install: node_modules
 
-.PHONY: standalone
+clean:
+	@rm -rf node_modules wp-cookie-auth.js
+
+wpcom-cookie-auth.js: install index.js
+	@$(BROWSERIFY) -s wpcomProxyRequest index.js > $@
+
+node_modules: package.json
+	@NODE_ENV= $(NPM) install
+	@$(ADD_COMPONENT_SYMLINKS)
+	@touch node_modules
+
+
+.PHONY: standalone install clean

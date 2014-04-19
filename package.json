@@ -10,6 +10,10 @@
   "repository": "git@github.com:Automattic/wpcom-cookie-auth.git",
   "main": "index.js",
   "devDependencies": {
-    "browserify": "~3.44.0"
+    "browserify": "~3.44.0",
+    "add-component-symlinks": "~1.0.3"
+  },
+  "dependencies": {
+    "component-event": "~0.1.3"
   }
 }
