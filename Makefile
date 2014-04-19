@@ -19,7 +19,7 @@ install: node_modules
 clean:
 	@rm -rf node_modules wpcom-cookie-auth.js
 
-wpcom-cookie-auth.js: install index.js
+wpcom-cookie-auth.js: node_modules index.js
 	@$(BROWSERIFY) -s wpcomProxyRequest index.js > $@
 
 node_modules: package.json
