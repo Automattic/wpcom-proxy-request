@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WordPress.com REST API Proxy Request Test Page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <script src="wpcom-cookie-auth.js"></script>
+    <script>
+      wpcomProxyRequest({
+        metaAPI: { accessAllUsersBlogs: true }
+      }, function() {
+        console.log(arguments);
+      });
+
+      wpcomProxyRequest('/me', function(response, http_status){
+        console.log(arguments);
+      });
+
+      wpcomProxyRequest('/me/sites', function(response, http_status){
+        console.log(arguments);
+      });
+
+      wpcomProxyRequest('/sites/5836086', function(response, http_status){
+        console.log(arguments);
+      });
+    </script>
+  </body>
+</html>
