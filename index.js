@@ -71,36 +71,51 @@ function request (params) {
   if ('string' == typeof params) {
     params = { path: params };
   }
-  debug('params object:', params);
 
   // inject the <iframe> upon the first proxied API request
   if (!iframe) install();
 
   // generate a uid for this API request
   var id = uid();
+  params.callback = id;
+  params.supports_args = true; // supports receiving variable amount of arguments
+  debug('params object:', params);
 
   var req = new Promise(function (resolve, reject) {
     if (loaded) {
-      debug('sending API request to proxy <iframe>');
       submitRequest(params, resolve, reject);
     } else {
       debug('buffering API request since proxying <iframe> is not yet loaded');
-      buffered.push([params, resolve, reject]);
+      buffered.push([ params, resolve, reject ]);
     }
   });
 
-  // store the Promise so that "onmessage" can access it again
-  requests[id] = req;
+  // store the `params` object so that "onmessage" can access it again
+  requests[id] = params;
 
   return req;
 }
 
 /**
+ * Calls the postMessage() function on the <iframe>, and afterwards add the
+ * `resolve` and `reject` functions to the "params" object (after it's been
+ * serialized into the iframe context).
  *
+ * @param {Object} params
+ * @param {Function} resolve
+ * @param {Function} reject
+ * @api private
  */
 
-function submitRequest (params) {
+function submitRequest (params, resolve, reject) {
+  debug('sending API request to proxy <iframe>:', params);
+
   iframe.contentWindow.postMessage(params, proxyOrigin);
+
+  // needs to be added after the `.postMessage()` call otherwise
+  // a DOM error is thrown
+  params.resolve = resolve;
+  params.reject = reject;
 }
 
 /**
@@ -156,5 +171,24 @@ function onload (e) {
  */
 
 function onmessage (e) {
-  console.log('onmessage', e);
+  debug('onmessage');
+
+  // safeguard...
+  if (e.origin !== proxyOrigin) {
+    debug('ignoring message... %s !== %s', e.origin, proxyOrigin);
+    return;
+  }
+
+  var data = e.data;
+  if (!data || !data.length) {
+    debug('`e.data` doesn\'t appear to be an Array, bailing...');
+    return;
+  }
+
+  var id = data[data.length - 1];
+  var params = requests[id];
+  delete requests[id];
+
+  // TODO: call `reject()` under non 2xx scenarios?
+  params.resolve(data[0]);
 }
