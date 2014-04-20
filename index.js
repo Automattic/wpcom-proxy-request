@@ -61,7 +61,6 @@ var requests = {};
  * logged user's cookies).
  *
  * @param {Object|String} params
- * @param {Function} fn callback function
  * @api public
  */
 
