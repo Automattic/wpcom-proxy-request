@@ -160,6 +160,7 @@ function onload (e) {
   for (var i = 0; i < buffered.length; i++) {
     submitRequest.apply(null, buffered[i]);
   }
+  buffered = null;
 }
 
 /**
