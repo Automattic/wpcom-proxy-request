@@ -1,6 +1,14 @@
 {
   "name": "wpcom-cookie-auth",
   "description": "Proxied cookie-authenticated REST API requests",
+  "keywords": [
+    "browser",
+    "wpcom",
+    "wordpress",
+    "rest",
+    "api",
+    "cookie"
+  ],
   "version": "0.0.1",
   "author": "Automattic, Inc.",
   "contributors": [
