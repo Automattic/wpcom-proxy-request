@@ -9,21 +9,29 @@
     <script>
       wpcomProxyRequest({
         metaAPI: { accessAllUsersBlogs: true }
-      }, function() {
-        console.log(arguments);
+      }, function(err) {
+        if (err) throw err;
+        console.log('successfully upgraded to "access all users blogs" mode');
       });
 
-      wpcomProxyRequest('/me', function(response, http_status){
-        console.log(arguments);
+      // ensure that node.js-style callback syntax works
+      wpcomProxyRequest('/me', function(err, res){
+        if (err) throw err;
+        console.log(res);
+
+        var div = document.createElement('div');
+        div.innerHTML = 'Your WordPress.com "username" is: <b>@' + res.username + '<\/b>';
+        document.body.appendChild(div);
       });
 
-      wpcomProxyRequest('/me/sites', function(response, http_status){
-        console.log(arguments);
-      });
-
-      wpcomProxyRequest('/sites/5836086', function(response, http_status){
-        console.log(arguments);
-      });
+      // ensure that Promise-style return values work
+      var req = wpcomProxyRequest('/me');
+      setTimeout(function () {
+        req.then(function(res){
+          console.log(res);
+        });
+      }, 3000);
+      console.log(req);
     </script>
   </body>
 </html>
