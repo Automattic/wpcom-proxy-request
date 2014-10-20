@@ -42,7 +42,7 @@
 
       function onprogress (e) {
         if (e.lengthComputable) {
-          var percentComplete = e.loaded / e.total;
+          var percentComplete = e.loaded / e.total * 100;
           console.log('progress event! %s%', percentComplete.toFixed(2));
         } else {
           // Unable to compute progress information since the total size is unknown
