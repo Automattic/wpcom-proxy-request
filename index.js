@@ -6,13 +6,14 @@
 var uid = require('uid');
 var event = require('component-event');
 var Promise = require('promise');
+var ProgressEvent = require('progress-event');
 var debug = require('debug')('wpcom-proxy-request');
 
 /**
  * Export `request` function.
  */
 
-module.exports = Promise.nodeify(request);
+module.exports = request;
 
 /**
  * WordPress.com REST API base endpoint.
@@ -65,19 +66,28 @@ var hasFileSerializationBug = false;
  */
 
 var requests = {};
+var xhrs = {};
+
+/**
+ * Are HTML5 XMLHttpRequest2 "progress" events supported?
+ * See: http://goo.gl/xxYf6D
+ */
+
+var supportsProgress = !!window.ProgressEvent && !!window.FormData;
 
 /**
  * Performs a "proxied REST API request". This happens by calling
  * `iframe.postMessage()` on the proxy iframe instance, which from there
  * takes care of WordPress.com user authentication (via the currently
- * logged user's cookies).
+ * logged-in user's cookies).
  *
  * @param {Object|String} params
+ * @param {Function} [callback]
  * @api public
  */
 
-function request (params) {
-  debug('request()', params);
+function request (params, fn) {
+  debug('request(%o)', params);
 
   if ('string' == typeof params) {
     params = { path: params };
@@ -90,6 +100,7 @@ function request (params) {
   var id = uid();
   params.callback = id;
   params.supports_args = true; // supports receiving variable amount of arguments
+  params.supports_progress = supportsProgress; // supports receiving XHR "progress" events
 
   // force uppercase "method" since that's what the <iframe> is expecting
   params.method = String(params.method || 'GET').toUpperCase();
@@ -107,6 +118,19 @@ function request (params) {
 
   // store the `params` object so that "onmessage" can access it again
   requests[id] = params;
+
+  var xhr = new XMLHttpRequest();
+  xhrs[id] = xhr;
+
+  if (supportsProgress) {
+    req.upload = xhr.upload;
+  }
+
+  if ('function' === typeof fn) {
+    req.then(function (res) {
+      fn(null, res);
+    }, fn);
+  }
 
   return req;
 }
@@ -325,7 +349,21 @@ function onmessage (e) {
   }
 
   var data = e.data;
-  if (!data || !data.length) {
+  if (!data) return debug('no `data`, bailing');
+
+  // check if we're receiving a "progress" event
+  if (data.upload || data.download) {
+    debug('got "progress" event: %o', data);
+    var xhr = xhrs[data.callbackId];
+    if (xhr) {
+      var prog = new ProgressEvent('progress', data);
+      var target = data.upload ? xhr.upload : xhr;
+      target.dispatchEvent(prog);
+    }
+    return;
+  }
+
+  if (!data.length) {
     debug('`e.data` doesn\'t appear to be an Array, bailing...');
     return;
   }
@@ -333,6 +371,8 @@ function onmessage (e) {
   var id = data[data.length - 1];
   var params = requests[id];
   delete requests[id];
+
+  delete xhrs[id];
 
   var body = data[0];
   var statusCode = data[1];
