@@ -27,7 +27,7 @@
         }
 
         // do the API request through the iframe proxy
-        WPCOM.proxy({
+        var req = WPCOM.proxy({
           path: '/sites/tootallnate.wordpress.com/media/new',
           method: 'POST',
           formData: formData
@@ -35,8 +35,19 @@
           if (err) throw err;
           console.log(res);
         });
+        console.log(req);
 
+        req.upload.onprogress = onprogress;
       };
+
+      function onprogress (e) {
+        if (e.lengthComputable) {
+          var percentComplete = e.loaded / e.total;
+          console.log('progress event! %s%', percentComplete.toFixed(2));
+        } else {
+          // Unable to compute progress information since the total size is unknown
+        }
+      }
     </script>
   </body>
 </html>
