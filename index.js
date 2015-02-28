@@ -153,7 +153,7 @@ function submitRequest (params) {
     postAsArrayBuffer(params);
   } else {
     try {
-      iframe.contentWindow.postMessage(params, proxyOrigin);
+      iframe.contentWindow.postMessage(JSON.stringify(params), proxyOrigin);
     } catch (e) {
       // were we trying to serialize a `File`?
       if (hasFile(params)) {
@@ -340,6 +340,10 @@ function onmessage (e) {
 
   var data = e.data;
   if (!data) return debug('no `data`, bailing');
+
+  if ( 'string' === typeof data ) {
+    data = JSON.parse(data);
+  }
 
   // check if we're receiving a "progress" event
   if (data.upload || data.download) {

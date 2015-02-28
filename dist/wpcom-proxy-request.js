@@ -154,7 +154,7 @@ function submitRequest (params) {
     postAsArrayBuffer(params);
   } else {
     try {
-      iframe.contentWindow.postMessage(params, proxyOrigin);
+      iframe.contentWindow.postMessage(JSON.stringify(params), proxyOrigin);
     } catch (e) {
       // were we trying to serialize a `File`?
       if (hasFile(params)) {
@@ -315,11 +315,12 @@ function onload (e) {
   loaded = true;
 
   // flush any buffered API calls
-  for (var i = 0; i < buffered.length; i++) {
-    submitRequest(buffered[i]);
+  if (buffered) {
+    for (var i = 0; i < buffered.length; i++) {
+      submitRequest(buffered[i]);
+    }
+    buffered = null;
   }
-
-  buffered = null;
 }
 
 /**
@@ -340,6 +341,10 @@ function onmessage (e) {
 
   var data = e.data;
   if (!data) return debug('no `data`, bailing');
+
+  if ( 'string' === typeof data ) {
+    data = JSON.parse(data);
+  }
 
   // check if we're receiving a "progress" event
   if (data.upload || data.download) {
@@ -489,6 +494,17 @@ exports.load = load;
 exports.useColors = useColors;
 
 /**
+ * Use chrome.storage.local if we are in an app
+ */
+
+var storage;
+
+if (typeof chrome !== 'undefined' && typeof chrome.storage !== 'undefined')
+  storage = chrome.storage.local;
+else
+  storage = window.localStorage;
+
+/**
  * Colors.
  */
 
@@ -577,10 +593,10 @@ function formatArgs() {
  */
 
 function log() {
-  // This hackery is required for IE8,
-  // where the `console.log` function doesn't have 'apply'
-  return 'object' == typeof console
-    && 'function' == typeof console.log
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
     && Function.prototype.apply.call(console.log, console, arguments);
 }
 
@@ -594,9 +610,9 @@ function log() {
 function save(namespaces) {
   try {
     if (null == namespaces) {
-      localStorage.removeItem('debug');
+      storage.removeItem('debug');
     } else {
-      localStorage.debug = namespaces;
+      storage.debug = namespaces;
     }
   } catch(e) {}
 }
@@ -611,7 +627,7 @@ function save(namespaces) {
 function load() {
   var r;
   try {
-    r = localStorage.debug;
+    r = storage.debug;
   } catch(e) {}
   return r;
 }
