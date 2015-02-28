@@ -29,6 +29,25 @@ var origin = window.location.protocol + '//' + window.location.host;
 debug('using "origin": %o', origin);
 
 /**
+ * Detecting support for the structured clone algorithm. IE8 and 9, and Firefox
+ * 6.0 and below only support strings as postMessage's message. This browsers
+ * will try to use the toString method.
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
+ * https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/The_structured_clone_algorithm
+ * https://github.com/Modernizr/Modernizr/issues/388#issuecomment-31127462
+ */
+
+var postStrings = false;
+try {
+  window.postMessage({
+    toString: function () {
+      postStrings = true;
+    }
+  },"*");
+} catch (e) {}
+
+/**
  * Reference to the <iframe> DOM element.
  * Gets set in the install() function.
  */
@@ -154,7 +173,7 @@ function submitRequest (params) {
     postAsArrayBuffer(params);
   } else {
     try {
-      iframe.contentWindow.postMessage(JSON.stringify(params), proxyOrigin);
+      iframe.contentWindow.postMessage(postStrings ? JSON.stringify(params) : params, proxyOrigin);
     } catch (e) {
       // were we trying to serialize a `File`?
       if (hasFile(params)) {
@@ -342,7 +361,7 @@ function onmessage (e) {
   var data = e.data;
   if (!data) return debug('no `data`, bailing');
 
-  if ( 'string' === typeof data ) {
+  if ('string' === typeof data && postStrings) {
     data = JSON.parse(data);
   }
 
