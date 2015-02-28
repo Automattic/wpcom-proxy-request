@@ -360,7 +360,7 @@ function onmessage (e) {
   var data = e.data;
   if (!data) return debug('no `data`, bailing');
 
-  if ('string' === typeof data && postStrings) {
+  if (postStrings && 'string' === typeof data) {
     data = JSON.parse(data);
   }
 
