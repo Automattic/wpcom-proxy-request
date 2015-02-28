@@ -37,14 +37,17 @@ debug('using "origin": %o', origin);
  * https://github.com/Modernizr/Modernizr/issues/388#issuecomment-31127462
  */
 
-var postStrings = false;
-try {
-  window.postMessage({
-    toString: function () {
-      postStrings = true;
-    }
-  },"*");
-} catch (e) {}
+var postStrings = (function (){
+  var r = false;
+  try {
+    window.postMessage({
+      toString: function () {
+        r = true;
+      }
+    },"*");
+  } catch (e) {}
+  return r;
+})();
 
 /**
  * Reference to the <iframe> DOM element.
