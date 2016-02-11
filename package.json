@@ -16,15 +16,20 @@
     "Nathan Rajlich <nathan@automattic.com>"
   ],
   "repository": "git://github.com/Automattic/wpcom-proxy-request.git",
-  "main": "index.js",
-  "devDependencies": {
-    "browserify": "9.0.3"
-  },
+  "main": "dist/index.js",
   "dependencies": {
+    "babel": "^5.8.23",
+    "babel-runtime": "5.8.12",
     "component-event": "0.1.4",
     "debug": "~2.2.0",
     "eslint": "^1.10.3",
     "progress-event": "~1.0.0",
     "uid": "0.0.2"
+  },
+  "devDependencies": {
+    "babel-core": "^5.8.23",
+    "babel-eslint": "^4.1.6",
+    "babel-loader": "^5.3.2",
+    "webpack": "^1.12.13"
   }
 }
