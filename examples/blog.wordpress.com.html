@@ -1,26 +1,14 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>wpcom-proxy-request example</title>
+		<title>wpcom-proxy-request - WordPress.com blog info</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	</head>
 
 	<body>
 		<script src="../dist/wpcom-proxy-request.js"></script>
 		<script>
-			wpcomProxyRequest( {
-				metaAPI: { accessAllUsersBlogs: true }
-			}, function( err ) {
-			if (err) {
-				console.log( err );
-				throw err;
-			}
-
-				console.log( 'proxy now running in "access all user\'s blogs" mode' );
-			} );
-
-			// ensure that node.js-style callback syntax works
-			var req = wpcomProxyRequest( '/me', function( err, res ) {
+			wpcomProxyRequest( '/sites/en.blog.wordpress.com', function( err, res ) {
 				if  (err ) {
 					return console.error( err );
 				}
@@ -34,3 +22,4 @@
 		</script>
 	</body>
 </html>
+

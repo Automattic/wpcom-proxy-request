@@ -1,62 +1,112 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>WordPress.com REST API Proxy Media Upload Test Page</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body>
-    <div>Select one or more files to upload media library (site_id=<strong id="site"></strong>):</div>
-    <div><input type="file" id="file" multiple disabled></div>
-    <script src="../dist/wpcom-proxy-request.js"></script>
-    <script>
-      WPCOM.proxy({
-        metaAPI: { accessAllUsersBlogs: true }
-      }, function(err) {
-        if (err) throw err;
-        console.log('proxy now running in "access all user\'s blogs" mode');
-      });
+	<head>
+		<title>WordPress.com REST API Proxy Media Upload Test Page</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<style>
+			body {
+				font-family: sans-serif;
+				font-size: 12px;
+				padding: 20px;
+				margin: 0;
+			}
 
-      var site;
-      var input = document.getElementById('file');
+			#site {
+				color: #aaa;
+			}
 
-      WPCOM.proxy('/me', function (err, data) {
-        if (err) throw err;
-        site = data.primary_blog;
-        document.getElementById('site').innerHTML = site;
-        input.removeAttribute('disabled');
-      });
+			#site.loaded {
+				color: #333
+			}
+		</style>
+	</head>
 
-      // select files on the "input" element
-      input.onchange = function (e) {
+	<body>
+		<div>
+			<p>Select one or more files to upload media library</p>
+			<p><span id="site">loading your primary blog ...</span></div>
+		<div>
+			<input type="file" id="file" multiple disabled />
+			<div id="images-container"></div>
+		</div>
 
-        // construct a 2D `formData` array for the selected files
-        var formData = [];
-        for (var i = 0; i < e.target.files.length; i++) {
-          formData.push(['media[]', e.target.files[i]]);
-        }
+		<script src="../dist/wpcom-proxy-request.js"></script>
 
-        // do the API request through the iframe proxy
-        var req = WPCOM.proxy({
-          path: '/sites/' + site + '/media/new',
-          method: 'POST',
-          formData: formData
-        }, function(err, res){
-          if (err) throw err;
-          console.log('response', res);
-        });
-        console.log(req);
+		<script>
+			wpcomProxyRequest({
+				metaAPI: { accessAllUsersBlogs: true }
+			}, function( err ) {
+				if ( err ) {
+					return console.error( err );
+				}
+				console.log( 'proxy now running in "access all user\'s blogs" mode' );
+			} );
 
-        req.upload.onprogress = onprogress;
-      };
+			var site;
+			var site_ID;
+			var input = document.getElementById( 'file' );
 
-      function onprogress (e) {
-        if (e.lengthComputable) {
-          var percentComplete = e.loaded / e.total * 100;
-          console.log('progress event! %s%', percentComplete.toFixed(2));
-        } else {
-          // Unable to compute progress information since the total size is unknown
-        }
-      }
-    </script>
-  </body>
+			wpcomProxyRequest('/me', function ( err, data ) {
+				if (err) {
+					return console.error( err );
+				}
+
+				site = data.primary_blog_url;
+				site_ID = data.primary_blog;
+				var siteElement = document.getElementById( 'site' );
+				siteElement.innerHTML = 'The image/s will be uploaded to '
+					+ '<a href="' + site + '">' + site + '</a> blog.';
+
+				siteElement.setAttribute( 'class', 'loaded' );
+				input.removeAttribute( 'disabled' );
+			} );
+
+			// select files on the "input" element
+			input.onchange = function (e) {
+				// construct a 2D `formData` array for the selected files
+				var formData = [];
+				for ( var i = 0; i < e.target.files.length; i++ ) {
+				formData.push( [ 'media[]', e.target.files[ i ] ] );
+			}
+
+			// do the API request through the iframe proxy
+			var req = wpcomProxyRequest( {
+				path: '/sites/' + site_ID + '/media/new',
+				method: 'POST',
+				formData: formData
+				}, function( err, res ) {
+					if ( err ) {
+						return console.error( err );
+					}
+
+					if ( ! res || ! res.media || ! res.media.length ) {
+						return console.log( 'no data' );
+					}
+
+					var imagesContainer = document.getElementById('images-container' );
+
+					for( var i = 0; i < res.media.length; i++ ) {
+						imagesContainer.appendChild( document.createElement( 'br' ) );
+
+						var data = res.media[ i ];
+						var img = document.createElement( 'img' );
+						img.src = data.link
+						img.setAttribute( 'width', data.metadata.width );
+						imagesContainer.appendChild( img );
+					}
+				} );
+
+				req.upload.onprogress = onprogress;
+			};
+
+			function onprogress( e ) {
+				if ( e.lengthComputable ) {
+					var percentComplete = e.loaded / e.total * 100;
+					console.log( 'progress event! %s%', percentComplete.toFixed( 2 ) );
+				} else {
+					// Unable to compute progress information since the total size is unknown
+				}
+			}
+		</script>
+	</body>
 </html>
