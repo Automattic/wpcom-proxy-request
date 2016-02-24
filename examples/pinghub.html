@@ -33,7 +33,10 @@
               echo( "Sent " + x );
             });
           }, 30 * x ) );
-        }
+          setTimeout( function() {
+            WPCOM.proxy({path: path, action: 'disconnect'}, function(){});
+          }, 2000 );
+      }
 
         else if ( event.response.type === 'message' ) {
           echo( "Received " + event.response.data );
@@ -54,10 +57,6 @@
       xhr.onload = onload;
       xhr.onerror = onerror;
       xhr.onclose = onerror;
-
-      setTimeout( function() {
-        WPCOM.proxy({path: path, action: 'disconnect'}, function(){});
-      }, 2000 );
     </script>
   </body>
 </html>
