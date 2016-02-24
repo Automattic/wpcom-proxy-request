@@ -390,8 +390,8 @@ function onmessage (e) {
 
   if ( statusCode == 207 ) {
     // 207 is a signal from rest-proxy. It means, "this isn't the final
-    // response to the query." This enables half-duplex websocket connections
-    // (receive only) by invoking the same success callback for each message.
+    // response to the query." The proxy supports WebSocket connections
+    // by invoking the original success callback for each message received.
   } else {
     // this is the final response to this query
     delete requests[id];
