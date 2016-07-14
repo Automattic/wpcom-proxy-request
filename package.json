@@ -9,6 +9,9 @@
     "api",
     "cookie"
   ],
+  "scripts": {
+    "prepublish": "make build"
+  },
   "version": "2.0.0",
   "author": "Automattic, Inc.",
   "contributors": [
