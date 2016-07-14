@@ -5,9 +5,9 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	</head>
 	<body>
-		<script src="../dist/wpcom-proxy-request.js"></script>
+		<script src="dist/wpcom-proxy-request.js"></script>
 		<script>
-			WPComProxyRequest( {
+			WPCOMProxyRequest( {
 				metaAPI: { accessAllUsersBlogs: true }
 			}, function( err ) {
 				if ( err ) {
@@ -17,7 +17,7 @@
 				console.log( 'proxy now running in "access all user\'s blogs" mode' );
 			} );
 
-			WPComProxyRequest( '/me', function( err, res ) {
+			WPCOMProxyRequest( '/me', function( err, res ) {
 				if ( err ) {
 					throw err;
 				}
