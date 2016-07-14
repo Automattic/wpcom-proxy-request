@@ -16,6 +16,11 @@
     "Nathan Rajlich <nathan@automattic.com>",
     "Andy Skelton <andy@automattic.com>"
   ],
+  "files": [
+    "build",
+    "History.md",
+    "README.md"
+  ],
   "repository": "git://github.com/Automattic/wpcom-proxy-request.git",
   "license": "MIT",
   "main": "build/index.js",
