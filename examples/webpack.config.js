@@ -1,5 +1,5 @@
 module.exports = {
-	entry: __dirname + '/build/index.js',
+	entry: __dirname + '/../build/index.js',
 
 	node: {
 		fs: 'empty'
@@ -9,7 +9,7 @@ module.exports = {
 		path: __dirname + '/dist/',
 		filename: 'wpcom-proxy-request.js',
 		libraryTarget: 'var',
-		library: 'WPComProxyRequest'
+		library: 'WPCOMProxyRequest'
 	},
 
 	resolve: {

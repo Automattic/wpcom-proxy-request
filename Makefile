@@ -14,14 +14,14 @@ NODE ?= node
 NPM ?= $(NODE) $(shell which npm)
 WEBPACK ?= $(NODE) $(BIN)/webpack
 
+# create standalone bundle for testing purpose
 standalone: build build/wpcom-proxy-request.js
 
 build/wpcom-proxy-request.js:
-	@$(WEBPACK) -p --config ./webpack.config.js
+	@$(WEBPACK) -p --config ./examples/webpack.config.js
 
 node_modules: package.json
 	@NODE_ENV= $(NPM) install
 	@touch node_modules
-
 
 .PHONY: standalone
