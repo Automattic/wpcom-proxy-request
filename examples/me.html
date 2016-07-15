@@ -7,6 +7,11 @@
 	<body>
 		<script src="dist/wpcom-proxy-request.js"></script>
 		<script>
+			/* global WPCOMProxyRequest */
+			/* eslint-disable no-var, no-console */
+			/* eslint no-undef: "error" */
+			var output = '';
+
 			WPCOMProxyRequest( {
 				metaAPI: { accessAllUsersBlogs: true }
 			}, function( err ) {
@@ -24,10 +29,11 @@
 
 				console.log( res );
 
-				var output = document.createElement( 'pre' );
+				output = document.createElement( 'pre' );
 				output.innerHTML = JSON.stringify( res, null, 2 );
 				document.body.appendChild( output );
 			} );
+
 		</script>
 	</body>
 </html>
