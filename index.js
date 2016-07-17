@@ -136,7 +136,10 @@ const request = ( params, fn ) => {
 			}
 
 			called = true;
-			fn( null, e.response || xhr.response, e.headers );
+			const body = e.response || xhr.response;
+			debug( 'body: ', body );
+			debug( 'headers: ', e.headers );
+			fn( null, body, e.headers );
 		}
 		function xhrOnError( e ) {
 			if ( called ) {
@@ -144,7 +147,10 @@ const request = ( params, fn ) => {
 			}
 
 			called = true;
-			fn( e.error || e.err || e, null, e.headers );
+			const error = e.error || e.err || e;
+			debug( 'error: ', error );
+			debug( 'headers: ', e.headers );
+			fn( error, null, e.headers );
 		}
 
 		event.bind( xhr, 'load', xhrOnLoad );
