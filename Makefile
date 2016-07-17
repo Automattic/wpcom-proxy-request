@@ -15,6 +15,7 @@ APP_PORT := 3001
 # applications
 NODE ?= node
 NPM ?= $(NODE) $(shell which npm)
+CHOKI ?= $(BIN)/chokidar
 WEBPACK ?= $(NODE) $(BIN)/webpack
 SERVE = $(BIN)/serve
 
@@ -26,6 +27,9 @@ build/wpcom-proxy-request.js:
 
 # Client Test APP
 build-test-app: build client-test-app client-test-app/mocha.js client-test-app/mocha.css client-test-app/bundle.js
+
+watch-test-app:
+	make build-test-app& $(CHOKI) $(ROOT) -c 'make'
 
 client-test-app:
 	mkdir -p $(TEST_APP_FOLDER)

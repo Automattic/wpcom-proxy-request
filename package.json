@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.0",
+    "chokidar-cli": "^1.2.0",
     "eslint": "^3.0.0",
     "n8-make": "^1.4.0",
     "serve": "^1.4.0",
