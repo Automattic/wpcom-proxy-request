@@ -462,6 +462,8 @@ function onmessage( e ) {
 			statusCode = body.data.status;
 			delete body.code;
 			delete body.data;
+		} else {
+			statusCode = 200;
 		}
 	}
 
