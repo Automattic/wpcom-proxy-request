@@ -405,7 +405,7 @@ function onmessage( e ) {
 	}
 
 	// Once the iframe is loaded, we can start using it.
-	if ( data === 'ready' ) {
+	if (data === '["ready",200,null]') {
 		onload();
 		return;
 	}
