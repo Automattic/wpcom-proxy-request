@@ -26,7 +26,7 @@ $ npm install wpcom-proxy-request
 // Import wpcom-proxy-request handler
 import proxy from 'wpcom-proxy-request';
 
-proxy( '/me', function( err, body, headers ) {
+proxy( { path: '/me' }, function( err, body, headers ) {
   if (err) {
     throw err;
   }
