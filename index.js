@@ -94,18 +94,13 @@ debug( 'using "origin": %o', origin );
  * takes care of WordPress.com user authentication (via the currently
  * logged-in user's cookies).
  *
- * @param {Object|String} originalParams - request parameters
+ * @param {Object} originalParams - request parameters
  * @param {Function} [fn] - callback response
  * @return {XMLHttpRequest} XMLHttpRequest instance
  * @api public
  */
 const request = ( originalParams, fn ) => {
-	let params;
-	if ( 'string' === typeof originalParams ) {
-		params = { path: originalParams };
-	} else {
-		params = Object.assign( {}, originalParams );
-	}
+	let params = Object.assign( {}, originalParams );
 
 	debug( 'request(%o)', params );
 

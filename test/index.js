@@ -95,23 +95,6 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 							done();
 						} );
 					} );
-
-					it( '[v1] should get `me` user with path string', done => {
-						proxy( '/me', ( error, body, headers ) => {
-							// error
-							expect( error ).to.be.an( 'null' );
-
-							// body
-							expect( body.ID ).to.be.ok;
-							expect( body.ID ).to.be.a( 'number' );
-							expect( body.username ).to.be.ok;
-
-							// headers
-							expect( headers ).to.be.ok;
-
-							done();
-						} );
-					} );
 				} );
 
 				describe( 'wrong requests', () => {
