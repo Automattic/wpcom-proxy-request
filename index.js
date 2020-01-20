@@ -100,7 +100,12 @@ debug( 'using "origin": %o', origin );
  * @api public
  */
 const request = ( originalParams, fn ) => {
-	let params = Object.assign( {}, originalParams );
+	let params;
+	if ( 'string' === typeof originalParams ) {
+		params = { path: originalParams };
+	} else {
+		params = Object.assign( {}, originalParams );
+	}
 
 	debug( 'request(%o)', params );
 
@@ -109,9 +114,6 @@ const request = ( originalParams, fn ) => {
 		install();
 	}
 
-	if ( 'string' === typeof params ) {
-		params = { path: params };
-	}
 
 	// generate a uid for this API request
 	const id = uid();
